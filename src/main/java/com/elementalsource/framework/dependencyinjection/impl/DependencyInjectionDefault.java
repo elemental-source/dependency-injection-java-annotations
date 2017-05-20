@@ -1,20 +1,21 @@
 package com.elementalsource.framework.dependencyinjection.impl;
 
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
+import com.elementalsource.framework.dependencyinjection.ComponentReference;
 import com.elementalsource.framework.dependencyinjection.infra.exception.ApplicationException;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 public class DependencyInjectionDefault implements DependencyInjection {
 
-    private final Map<Class<?>, Object> map;
+    private final Map<ComponentReference, Object> components;
 
-    public DependencyInjectionDefault(final Map<Class<?>, Object> map) {
-        this.map = ImmutableMap.copyOf(map);
+    public DependencyInjectionDefault(final Map<ComponentReference, Object> components) {
+        this.components = ImmutableMap.copyOf(components);
     }
 
     public <T> T getBean(Class<T> classBean) {
-        final Object object = map.get(classBean);
+        final Object object = components.get(new ComponentReferenceDefault(classBean));
 
         if (object == null) {
             throw new ApplicationException("Dependency injection failure because " + classBean.getName() + " was not found");
@@ -30,6 +31,6 @@ public class DependencyInjectionDefault implements DependencyInjection {
 
     @Override
     public Integer getBeansQuantity() {
-        return map.size();
+        return components.size();
     }
 }

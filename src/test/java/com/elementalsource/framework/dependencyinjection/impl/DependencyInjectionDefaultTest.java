@@ -3,7 +3,11 @@ package com.elementalsource.framework.dependencyinjection.impl;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
+import com.elementalsource.framework.dependencyinjection.Component;
+import com.elementalsource.framework.dependencyinjection.ComponentReference;
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
 import com.elementalsource.framework.dependencyinjection.infra.exception.ApplicationException;
 import com.elementalsource.framework.dependencyinjection.sample.product.service.ProductService;
@@ -23,19 +27,49 @@ public class DependencyInjectionDefaultTest {
     public void shouldTakeRightImplementation() {
         // given
         final ProductStockBuilder productStockBuilder = new ProductStockBuilder();
+        final ProductService bean = new ProductService(productStockBuilder);
 
-        final Map<Class<?>, Object> map = ImmutableMap.<Class<?>, Object>builder()
-            .put(ProductStockBuilder.class, productStockBuilder)
-            .put(ProductService.class, new ProductService(productStockBuilder))
+        final Map<ComponentReference, Object> map = ImmutableMap.<ComponentReference, Object>builder()
+            .put(new ComponentReferenceDefault(ProductStockBuilder.class), productStockBuilder)
+            .put(new ComponentReferenceDefault(ProductService.class), bean)
             .build();
 
         final DependencyInjection dependencyInjection = new DependencyInjectionDefault(map);
 
         // when
-        final ProductService bean = dependencyInjection.getBean(ProductService.class);
+        final ProductService result = dependencyInjection.getBean(ProductService.class);
 
         // then
-        assertNotNull(bean);
+        assertNotNull(result);
+        assertSame(bean, result);
+        assertNotSame(new ProductService(productStockBuilder), result);
+    }
+
+    private interface MyComponent {
+
+    }
+
+    @Test
+    public void shouldTakeImplementationByInterface() {
+        @Component
+        class MyComponentImpl implements MyComponent {
+
+        }
+        // given
+        final MyComponentImpl bean = new MyComponentImpl();
+        final Map<ComponentReference, Object> map = ImmutableMap.<ComponentReference, Object>builder()
+            .put(new ComponentReferenceDefault(MyComponentImpl.class), bean)
+            .build();
+
+        final DependencyInjection dependencyInjection = new DependencyInjectionDefault(map);
+
+        // when
+        final MyComponent result = dependencyInjection.getBean(MyComponent.class);
+
+        // then
+        assertNotNull(result);
+        assertSame(bean, result);
+        assertNotSame(new MyComponentImpl(), result);
     }
 
     @Test
@@ -43,9 +77,9 @@ public class DependencyInjectionDefaultTest {
         // given
         final ProductStockBuilder productStockBuilder = new ProductStockBuilder();
 
-        final Map<Class<?>, Object> map = ImmutableMap.<Class<?>, Object>builder()
-            .put(ProductStockBuilder.class, productStockBuilder)
-            .put(ProductService.class, new ProductService(productStockBuilder))
+        final Map<ComponentReference, Object> map = ImmutableMap.<ComponentReference, Object>builder()
+            .put(new ComponentReferenceDefault(ProductStockBuilder.class), productStockBuilder)
+            .put(new ComponentReferenceDefault(ProductService.class), new ProductService(productStockBuilder))
             .build();
 
         final DependencyInjection dependencyInjection = new DependencyInjectionDefault(map);
@@ -60,7 +94,7 @@ public class DependencyInjectionDefaultTest {
     @Test
     public void shouldThrowAnErrorWhenNotExistsImplementationForClass() {
         // given
-        final DependencyInjection dependencyInjection = new DependencyInjectionDefault(ImmutableMap.<Class<?>, Object>builder().build());
+        final DependencyInjection dependencyInjection = new DependencyInjectionDefault(ImmutableMap.<ComponentReference, Object>builder().build());
         class ClassThatCannotExists {
 
         }
@@ -78,8 +112,8 @@ public class DependencyInjectionDefaultTest {
     @Test
     public void shouldThrowAnErrorWhenImplementationIsNotInstanceOfClass() {
         // given
-        final Map<Class<?>, Object> map = ImmutableMap.<Class<?>, Object>builder()
-            .put(ProductService.class, new Object())
+        final Map<ComponentReference, Object> map = ImmutableMap.<ComponentReference, Object>builder()
+            .put(new ComponentReferenceDefault(ProductService.class), new Object())
             .build();
         final DependencyInjection dependencyInjection = new DependencyInjectionDefault(map);
 

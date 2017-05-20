@@ -1,5 +1,6 @@
 package com.elementalsource.framework.dependencyinjection.impl;
 
+import com.elementalsource.framework.dependencyinjection.ComponentReference;
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
 import com.elementalsource.framework.dependencyinjection.DependencyInjectionFactory;
 import com.elementalsource.framework.dependencyinjection.infra.exception.ApplicationException;
@@ -23,23 +24,21 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
     }
 
     public DependencyInjection create(final Set<Class<?>> components) {
-        final HashMap<Class<?>, Object> constructedClasses = new HashMap<>();
+        final HashMap<ComponentReference, Object> constructedClasses = new HashMap<>();
 
         components.forEach(classBean -> {
-            if (!constructedClasses.containsKey(classBean)) {
+            if (!constructedClasses.containsKey(new ComponentReferenceDefault(classBean))) {
                 createBean(constructedClasses, classBean);
             }
         });
+
         return new DependencyInjectionDefault(constructedClasses);
     }
 
-    private Object createBean(final Map<Class<?>, Object> constructedClasses, final Class<?> classBean) {
-        final Constructor<?>[] constructors = classBean.getConstructors();
+    private Object createBean(final Map<ComponentReference, Object> constructedClasses, final Class<?> classBean) {
+        final Constructor<?>[] constructors = classBean.getDeclaredConstructors();
         try {
-            if (constructors.length == 0) {
-                final Object bean = classBean.newInstance();
-                return insertBean(constructedClasses, classBean, bean);
-            } else if (constructors.length > 1) {
+            if (constructors.length > 1) {
                 // TODO to implement annotation @Inject
                 throw new ApplicationException("It is necessary have just one constructor with all dependencies on bean: " + classBean.getName());
             } else {
@@ -61,12 +60,12 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
         }
     }
 
-    private Object insertBean(final Map<Class<?>, Object> constructedClasses, final Class<?> classBean, final Object bean) {
+    private Object insertBean(final Map<ComponentReference, Object> constructedClasses, final Class<?> classBean, final Object bean) {
         if (constructedClasses.containsKey(classBean)) {
             throw new ApplicationException("Circular reference on create bean " + classBean.getName());
         }
 
-        constructedClasses.put(classBean, bean);
+        constructedClasses.put(new ComponentReferenceDefault(classBean), bean);
         return bean;
     }
 

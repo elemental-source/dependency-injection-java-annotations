@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
 import com.elementalsource.framework.dependencyinjection.DependencyInjectionFactory;
-import com.elementalsource.framework.dependencyinjection.annotation.Component;
+import com.elementalsource.framework.dependencyinjection.Component;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.Set;

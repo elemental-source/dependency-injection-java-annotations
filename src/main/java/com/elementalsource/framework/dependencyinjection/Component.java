@@ -1,4 +1,4 @@
-package com.elementalsource.framework.dependencyinjection.annotation;
+package com.elementalsource.framework.dependencyinjection;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

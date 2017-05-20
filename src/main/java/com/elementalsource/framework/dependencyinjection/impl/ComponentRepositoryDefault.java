@@ -1,7 +1,7 @@
 package com.elementalsource.framework.dependencyinjection.impl;
 
 import com.elementalsource.framework.dependencyinjection.ComponentRepository;
-import com.elementalsource.framework.dependencyinjection.annotation.Component;
+import com.elementalsource.framework.dependencyinjection.Component;
 import java.util.Set;
 import org.reflections.Reflections;
 

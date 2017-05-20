@@ -17,7 +17,7 @@ public class ComponentRepositoryDefaultTest {
         final Set<Class<?>> allComponents = instance.getAllComponents();
 
         // then
-        assertEquals(5, allComponents.size());
+        assertEquals(6, allComponents.size());
     }
 
 }
