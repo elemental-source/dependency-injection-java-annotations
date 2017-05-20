@@ -34,15 +34,11 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
     }
 
     private Object createBean(final Map<Class<?>, Object> constructedClasses, final Class<?> classBean) {
-        if (constructedClasses.containsKey(classBean)) {
-            throw new ApplicationException("Circular reference on create bean " + classBean.getName());
-        }
         final Constructor<?>[] constructors = classBean.getConstructors();
         try {
             if (constructors.length == 0) {
                 final Object bean = classBean.newInstance();
-                constructedClasses.put(classBean, bean);
-                return bean;
+                return insertBean(constructedClasses, classBean, bean);
             } else if (constructors.length > 1) {
                 // TODO to implement annotation @Inject
                 throw new ApplicationException("It is necessary have just one constructor with all dependencies on bean: " + classBean.getName());
@@ -56,13 +52,22 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
                     }
                 }
                 final Object bean = parameters.isEmpty() ? constructor.newInstance() : constructor.newInstance(parameters.toArray());
-                constructedClasses.put(classBean, bean);
-                return bean;
+
+                return insertBean(constructedClasses, classBean, bean);
             }
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
             throw new ApplicationException("Error on create bean " + classBean.getName(), e);
         }
+    }
+
+    private Object insertBean(final Map<Class<?>, Object> constructedClasses, final Class<?> classBean, final Object bean) {
+        if (constructedClasses.containsKey(classBean)) {
+            throw new ApplicationException("Circular reference on create bean " + classBean.getName());
+        }
+
+        constructedClasses.put(classBean, bean);
+        return bean;
     }
 
 }
