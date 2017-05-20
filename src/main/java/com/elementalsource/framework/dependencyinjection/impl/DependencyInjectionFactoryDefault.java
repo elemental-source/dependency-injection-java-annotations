@@ -2,7 +2,6 @@ package com.elementalsource.framework.dependencyinjection.impl;
 
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
 import com.elementalsource.framework.dependencyinjection.DependencyInjectionFactory;
-import com.elementalsource.framework.dependencyinjection.annotation.Component;
 import com.elementalsource.framework.dependencyinjection.infra.exception.ApplicationException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.reflections.Reflections;
+import java.util.Set;
 
 public class DependencyInjectionFactoryDefault implements DependencyInjectionFactory {
 
@@ -23,24 +22,15 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
     private DependencyInjectionFactoryDefault() {
     }
 
-    /**
-     * Create bean
-     * when have parameters, I try to create dependencies
-     * if has a circular reference, I throw an exception
-     *
-     * @return Default DependencyInjection of System
-     */
-    public DependencyInjection create() {
-        return new Reflections()
-            .getTypesAnnotatedWith(Component.class)
-            .stream()
-            .findAny()
-            .map(classBean -> {
-                final HashMap<Class<?>, Object> constructedClasses = new HashMap<>();
+    public DependencyInjection create(final Set<Class<?>> components) {
+        final HashMap<Class<?>, Object> constructedClasses = new HashMap<>();
+
+        components.forEach(classBean -> {
+            if (!constructedClasses.containsKey(classBean)) {
                 createBean(constructedClasses, classBean);
-                return new DependencyInjectionDefault(constructedClasses);
-            })
-            .orElse(new DependencyInjectionDefault());
+            }
+        });
+        return new DependencyInjectionDefault(constructedClasses);
     }
 
     private Object createBean(final Map<Class<?>, Object> constructedClasses, final Class<?> classBean) {
@@ -49,7 +39,11 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
         }
         final Constructor<?>[] constructors = classBean.getConstructors();
         try {
-            if (constructors.length > 1) {
+            if (constructors.length == 0) {
+                final Object bean = classBean.newInstance();
+                constructedClasses.put(classBean, bean);
+                return bean;
+            } else if (constructors.length > 1) {
                 // TODO to implement annotation @Inject
                 throw new ApplicationException("It is necessary have just one constructor with all dependencies on bean: " + classBean.getName());
             } else {

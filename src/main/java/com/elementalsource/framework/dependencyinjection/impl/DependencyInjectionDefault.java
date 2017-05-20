@@ -3,7 +3,6 @@ package com.elementalsource.framework.dependencyinjection.impl;
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
 import com.elementalsource.framework.dependencyinjection.infra.exception.ApplicationException;
 import com.google.common.collect.ImmutableMap;
-import java.util.Collections;
 import java.util.Map;
 
 public class DependencyInjectionDefault implements DependencyInjection {
@@ -12,9 +11,6 @@ public class DependencyInjectionDefault implements DependencyInjection {
 
     public DependencyInjectionDefault(final Map<Class<?>, Object> map) {
         this.map = ImmutableMap.copyOf(map);
-    }
-    public DependencyInjectionDefault() {
-        this(Collections.emptyMap());
     }
 
     public <T> T getBean(Class<T> classBean) {
@@ -25,7 +21,8 @@ public class DependencyInjectionDefault implements DependencyInjection {
         }
 
         if (!classBean.isInstance(object)) {
-            throw new ApplicationException("Dependency injection failure because " + object.getClass().getName() + " is not instance of " + classBean.getName());
+            throw new ApplicationException(
+                "Dependency injection failure because " + object.getClass().getName() + " is not instance of " + classBean.getName());
         }
 
         return (T) object;
