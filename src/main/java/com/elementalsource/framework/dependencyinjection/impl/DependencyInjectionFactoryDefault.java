@@ -1,6 +1,7 @@
 package com.elementalsource.framework.dependencyinjection.impl;
 
 import com.elementalsource.framework.dependencyinjection.ComponentReference;
+import com.elementalsource.framework.dependencyinjection.ConstructorFind;
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
 import com.elementalsource.framework.dependencyinjection.DependencyInjectionFactory;
 import com.elementalsource.framework.dependencyinjection.infra.exception.ApplicationException;
@@ -11,13 +12,16 @@ import java.util.*;
 
 public class DependencyInjectionFactoryDefault implements DependencyInjectionFactory {
 
-    private static final DependencyInjectionFactoryDefault DEPENDENCY_INJECTION_FACTORY_DEFAULT = new DependencyInjectionFactoryDefault();
+    private static final DependencyInjectionFactoryDefault INSTANCE = new DependencyInjectionFactoryDefault(ConstructorFindDefault.getInstance());
 
     public static DependencyInjectionFactory getInstance() {
-        return DEPENDENCY_INJECTION_FACTORY_DEFAULT;
+        return INSTANCE;
     }
 
-    private DependencyInjectionFactoryDefault() {
+    private final ConstructorFind constructorFind;
+
+    private DependencyInjectionFactoryDefault(final ConstructorFind constructorFind) {
+        this.constructorFind = constructorFind;
     }
 
     public DependencyInjection create(final Set<Class<?>> components) {
@@ -33,29 +37,23 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
     }
 
     private Object createBean(final Map<ComponentReference, Object> constructedClasses, final Class<?> classBean) {
-        final Constructor<?>[] constructors = classBean.getDeclaredConstructors();
-        try {
-            if (constructors.length > 1) {
-                // TODO to implement annotation @Inject
-                throw new ApplicationException("It is necessary have just one constructor with all dependencies on bean: " + classBean.getName());
+        // TODO apply lambda on this mess
+        final List<Object> parameters = new ArrayList<>();
+        final Constructor<?> constructor = constructorFind.find(classBean);
+        for (Class<?> parameterType : constructor.getParameterTypes()) {
+            final ComponentReference componentReference = new ComponentReferenceDefault(parameterType);
+            final Object beanParamOfConstructor;
+            if (constructedClasses.containsKey(componentReference)) {
+                beanParamOfConstructor = constructedClasses.get(componentReference);
             } else {
-                // TODO apply lambda on this mess
-                final Constructor<?> constructor = constructors[0];
-                final List<Object> parameters = new ArrayList<>();
-                for (Class<?> parameterType : constructor.getParameterTypes()) {
-                    final ComponentReference componentReference = new ComponentReferenceDefault(parameterType);
-                    final Object beanParamOfConstructor;
-                    if (constructedClasses.containsKey(componentReference)) {
-                        beanParamOfConstructor = constructedClasses.get(componentReference);
-                    } else {
-                        beanParamOfConstructor = createBean(constructedClasses, parameterType);
-                    }
-                    parameters.add(beanParamOfConstructor);
-                }
-                final Object bean = parameters.isEmpty() ? constructor.newInstance() : constructor.newInstance(parameters.toArray());
-
-                return insertBean(constructedClasses, classBean, bean);
+                beanParamOfConstructor = createBean(constructedClasses, parameterType);
             }
+            parameters.add(beanParamOfConstructor);
+        }
+        try {
+            final Object bean = parameters.isEmpty() ? constructor.newInstance() : constructor.newInstance(parameters.toArray());
+
+            return insertBean(constructedClasses, classBean, bean);
         } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
             throw new ApplicationException("Error on create bean " + classBean.getName(), e);
