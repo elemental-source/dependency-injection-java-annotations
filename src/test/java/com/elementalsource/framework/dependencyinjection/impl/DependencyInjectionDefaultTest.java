@@ -1,11 +1,5 @@
 package com.elementalsource.framework.dependencyinjection.impl;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-
 import com.elementalsource.framework.dependencyinjection.Component;
 import com.elementalsource.framework.dependencyinjection.ComponentReference;
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
@@ -13,10 +7,14 @@ import com.elementalsource.framework.dependencyinjection.infra.exception.Applica
 import com.elementalsource.framework.dependencyinjection.sample.product.service.ProductService;
 import com.elementalsource.framework.dependencyinjection.sample.product.service.ProductStockBuilder;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.*;
 
 public class DependencyInjectionDefaultTest {
 
@@ -100,7 +98,6 @@ public class DependencyInjectionDefaultTest {
         }
 
         // expected exception
-        // throw new ApplicationException("Dependency injection failure because " + object.getClass().getName() + " is not " + classBean.getName());
         expectedException.expect(ApplicationException.class);
         expectedException
             .expectMessage(containsString("Dependency injection failure because " + ClassThatCannotExists.class.getName() + " was not found"));
@@ -118,7 +115,6 @@ public class DependencyInjectionDefaultTest {
         final DependencyInjection dependencyInjection = new DependencyInjectionDefault(map);
 
         // expected exception
-        // throw new ApplicationException("Dependency injection failure because " + object.getClass().getName() + " is not " + classBean.getName());
         expectedException.expect(ApplicationException.class);
         expectedException
             .expectMessage(containsString(
