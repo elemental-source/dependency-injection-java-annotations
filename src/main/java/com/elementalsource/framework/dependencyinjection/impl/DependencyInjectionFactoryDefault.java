@@ -43,11 +43,14 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
                 final Constructor<?> constructor = constructors[0];
                 final List<Object> parameters = new ArrayList<>();
                 for (Class<?> parameterType : constructor.getParameterTypes()) {
-                    if (constructedClasses.containsKey(parameterType)) {
-                        parameters.add(constructedClasses.get(parameterType));
+                    final ComponentReference componentReference = new ComponentReferenceDefault(parameterType);
+                    final Object beanParamOfConstructor;
+                    if (constructedClasses.containsKey(componentReference)) {
+                        beanParamOfConstructor = constructedClasses.get(componentReference);
                     } else {
-                        parameters.add(createBean(constructedClasses, parameterType));
+                        beanParamOfConstructor = createBean(constructedClasses, parameterType);
                     }
+                    parameters.add(beanParamOfConstructor);
                 }
                 final Object bean = parameters.isEmpty() ? constructor.newInstance() : constructor.newInstance(parameters.toArray());
 

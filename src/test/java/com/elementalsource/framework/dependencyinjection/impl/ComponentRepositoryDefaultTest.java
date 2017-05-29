@@ -1,10 +1,11 @@
 package com.elementalsource.framework.dependencyinjection.impl;
 
-import static org.junit.Assert.assertEquals;
-
 import com.elementalsource.framework.dependencyinjection.ComponentRepository;
-import java.util.Set;
 import org.junit.Test;
+
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public class ComponentRepositoryDefaultTest {
 
@@ -17,7 +18,7 @@ public class ComponentRepositoryDefaultTest {
         final Set<Class<?>> allComponents = instance.getAllComponents();
 
         // then
-        assertEquals(6, allComponents.size());
+        assertEquals(9, allComponents.size());
     }
 
 }
