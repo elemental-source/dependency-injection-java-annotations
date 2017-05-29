@@ -4,13 +4,10 @@ import com.elementalsource.framework.dependencyinjection.ComponentReference;
 import com.elementalsource.framework.dependencyinjection.DependencyInjection;
 import com.elementalsource.framework.dependencyinjection.DependencyInjectionFactory;
 import com.elementalsource.framework.dependencyinjection.infra.exception.ApplicationException;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class DependencyInjectionFactoryDefault implements DependencyInjectionFactory {
 
@@ -46,7 +43,9 @@ public class DependencyInjectionFactoryDefault implements DependencyInjectionFac
                 final Constructor<?> constructor = constructors[0];
                 final List<Object> parameters = new ArrayList<>();
                 for (Class<?> parameterType : constructor.getParameterTypes()) {
-                    if (!constructedClasses.containsKey(parameterType)) {
+                    if (constructedClasses.containsKey(parameterType)) {
+                        parameters.add(constructedClasses.get(parameterType));
+                    } else {
                         parameters.add(createBean(constructedClasses, parameterType));
                     }
                 }
