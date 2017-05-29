@@ -140,7 +140,7 @@ public class ConstructorFindDefaultTest {
         expectedException.expect(ApplicationException.class);
         expectedException
                 .expectMessage(containsString(
-                        "Could not be determined constructor on " + MyComponent.class.getName() + " because have more than one constructor without @Inject"));
+                        "Could not be determined constructor on " + MyComponent.class.getName() + " because have more than one constructor and any @Inject"));
 
         // when
         constructorFind.find(MyComponent.class);

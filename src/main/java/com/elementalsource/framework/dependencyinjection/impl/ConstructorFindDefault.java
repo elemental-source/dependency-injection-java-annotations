@@ -34,7 +34,7 @@ public class ConstructorFindDefault implements ConstructorFind {
                     .collect(Collectors.toList());
 
             if (constructorsWithInject.isEmpty()) {
-                throw new ApplicationException("Could not be determined constructor on " + classBean.getName() + " because have more than one constructor without @Inject");
+                throw new ApplicationException("Could not be determined constructor on " + classBean.getName() + " because have more than one constructor and any @Inject");
             } else if (constructorsWithInject.size() > 1) {
                 throw new ApplicationException("Could not be determined constructor on " + classBean.getName() + " because have more than one constructor with @Inject");
             } else {
