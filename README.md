@@ -1,7 +1,9 @@
 # Dependency injection with Java annotations
-Implementation of dependency injection in Java with annotations
+Implements a Dependency Injection framework in Java with annotations
 
-Just with the intention of learn about how it is work with annotations and dependency injection, was built our own framework :smile:
+It's intended to learn about how annotations and dependency injection works :smile:
+
+References:
 
 - https://www.beyondjava.net/blog/build-dependency-injection-framework/
 - http://tutorials.jenkov.com/java/annotations.html
