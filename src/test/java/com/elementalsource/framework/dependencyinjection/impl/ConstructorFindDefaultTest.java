@@ -31,7 +31,7 @@ public class ConstructorFindDefaultTest {
 
         // then
         assertNotNull(constructor);
-        assertEquals(0, constructor.getParameterCount());
+        assertEquals(1, constructor.getParameterCount());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class ConstructorFindDefaultTest {
 
         // then
         assertNotNull(constructor);
-        assertEquals(0, constructor.getParameterCount());
+        assertEquals(1, constructor.getParameterCount());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class ConstructorFindDefaultTest {
 
         // then
         assertNotNull(constructor);
-        assertEquals(0, constructor.getParameterCount());
+        assertEquals(1, constructor.getParameterCount());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ConstructorFindDefaultTest {
             MyComponent() {
             }
 
-            MyComponent(String param1) {
+            MyComponent(String param1, Integer param2) {
             }
         }
 
@@ -84,7 +84,7 @@ public class ConstructorFindDefaultTest {
 
         // then
         assertNotNull(constructor);
-        assertEquals(0, constructor.getParameterCount());
+        assertEquals(1, constructor.getParameterTypes().length);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class ConstructorFindDefaultTest {
 
         // then
         assertNotNull(constructor);
-        assertEquals(2, constructor.getParameterCount());
+        assertEquals(3, constructor.getParameterCount());
     }
 
     @Test
