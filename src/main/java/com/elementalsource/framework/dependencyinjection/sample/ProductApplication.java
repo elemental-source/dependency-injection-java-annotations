@@ -10,23 +10,9 @@ public class ProductApplication {
 
     public static void main(String... args) {
         final Set<Class<?>> allComponents = ComponentRepositoryDefault.getInstance().getAllComponents();
-
-
-
-
-
-
-
-
-
-
-
-
-
         final DependencyInjection dependencyInjection = DependencyInjectionFactoryDefault.getInstance().create(allComponents);
         final ProductController productController = dependencyInjection
             .getBean(ProductController.class);
-
         System.out.println(productController.getPoducts());
     }
 
