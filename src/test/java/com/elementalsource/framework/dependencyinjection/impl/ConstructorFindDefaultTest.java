@@ -9,7 +9,7 @@ import org.junit.rules.ExpectedException;
 
 import java.lang.reflect.Constructor;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,7 +30,7 @@ public class ConstructorFindDefaultTest {
         final Constructor<?> constructor = constructorFind.find(MyComponent.class);
 
         // then
-        assertNotNull(constructor);
+        assertNotNull("explicacao", constructor);
         assertEquals(1, constructor.getParameterCount());
     }
 

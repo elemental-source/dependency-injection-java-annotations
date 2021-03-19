@@ -11,7 +11,7 @@ public class DependencyInjectionDefault implements DependencyInjection {
     private final Map<ComponentReference, Object> components;
 
     public DependencyInjectionDefault(final Map<ComponentReference, Object> components) {
-        this.components = ImmutableMap.copyOf(components);
+        this.components = components;
     }
 
     public <T> T getBean(Class<T> classBean) {
