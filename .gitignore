@@ -1,5 +1,6 @@
 # Java #
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 *.war
 *.class
 
@@ -22,10 +23,6 @@ hs_err_pid*
 ######################
 .gradle/
 build/
-gradle/
-gradlew
-gradlew.bat
-
 out/
 
 
@@ -56,7 +53,7 @@ local.properties
 # CDT-specific (C/C++ Development Tooling)
 .cproject
 
-# Java annotation dependencyInjectionFactory (APT)
+# Java annotation processor (APT)
 .factorypath
 
 # PDT-specific (PHP Development Tools)
